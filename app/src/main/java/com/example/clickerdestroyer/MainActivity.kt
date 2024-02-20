@@ -3,12 +3,28 @@ package com.example.clickerdestroyer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.clickerdestroyer.ui.theme.ClickerDestroyerTheme
@@ -16,8 +32,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             ClickerDestroyerTheme {
                 // A surface container using the 'background' color from the theme
@@ -25,25 +43,64 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    Greeting()
                 }
             }
         }
     }
 }
 
+enum class BounceState { Pressed, Released }
 @Composable
-fun Greeting(name: String, viewModel: MainViewModel = hiltViewModel()) {
-    val creature = viewModel.getMonster()
-    Text(
-        text = "Hello ${creature.value.name}!",
-    )
+fun Greeting(viewModel: MainViewModel = hiltViewModel()) {
+    var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
+    val transition = updateTransition(targetState = currentState, label = "animation")
+    val scale: Float by transition.animateFloat(
+        transitionSpec = { spring(stiffness = 900f) }, label = ""
+    ) { state ->
+        // 0.75f размер картинки во время нажатия
+        if (state == BounceState.Pressed) {
+            0.75f
+        } else {
+            //когда отпускаешь нажатие, картинка возвращает свой размер
+            1f
+        }
+    }
+    val monster = viewModel.getMonster()
+
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+        Column(modifier = Modifier
+            .pointerInput(Unit) {
+                detectTapGestures(onPress = {
+
+                    // Устанавливает текущее состояние на Нажатое,
+                    // чтобы затриггерить анимацию нажатия
+                    currentState = BounceState.Pressed
+
+                    // Ожидает отжатия кнопки, чтобы изменить сотояние на Отжатое
+                    tryAwaitRelease()
+
+                    currentState = BounceState.Released
+                })
+            },horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = painterResource(id = R.drawable.monster),
+                contentDescription = "gfg",
+                modifier = Modifier.graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                })
+            Text(monster.value.name, textAlign = TextAlign.Center)
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     ClickerDestroyerTheme {
-        Greeting("Android")
+        Greeting()
     }
 }
+

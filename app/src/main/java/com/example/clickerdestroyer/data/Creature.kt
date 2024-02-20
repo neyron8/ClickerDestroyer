@@ -5,5 +5,6 @@ data class Creature(
     var typeOfCreature: String = "Mob",
     var level: Int = 1,
     var name: String = "Simple $typeOfCreature",
-    var reward: Int = 20
+    var reward: Int = 20,
+    var imageOfMonster: String = "empty",
 )
