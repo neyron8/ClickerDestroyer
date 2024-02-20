@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity() {
 
 enum class BounceState { Pressed, Released }
 @Composable
-fun Greeting(viewModel: MainViewModel = hiltViewModel()) {
+fun Greeting(mainViewModel: MainViewModel = hiltViewModel())
+{
     var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
     val transition = updateTransition(targetState = currentState, label = "animation")
     val scale: Float by transition.animateFloat(
@@ -66,32 +67,34 @@ fun Greeting(viewModel: MainViewModel = hiltViewModel()) {
             1f
         }
     }
-    val monster = viewModel.getMonster()
+    val monster = mainViewModel.getMonster()
+    var player = mainViewModel.getPlayer()
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-
-        Column(modifier = Modifier
-            .pointerInput(Unit) {
-                detectTapGestures(onPress = {
-
-                    // Устанавливает текущее состояние на Нажатое,
-                    // чтобы затриггерить анимацию нажатия
-                    currentState = BounceState.Pressed
-
-                    // Ожидает отжатия кнопки, чтобы изменить сотояние на Отжатое
-                    tryAwaitRelease()
-
-                    currentState = BounceState.Released
-                })
-            },horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = player.value.name)
+            Text(text = player.value.money.toString())
             Image(
                 painter = painterResource(id = R.drawable.monster),
                 contentDescription = "gfg",
                 modifier = Modifier.graphicsLayer {
                     scaleX = scale
                     scaleY = scale
+                }.pointerInput(Unit) {
+                    detectTapGestures(onPress = {
+                        mainViewModel.attack()
+                        // Устанавливает текущее состояние на Нажатое,
+                        // чтобы затриггерить анимацию нажатия
+                        currentState = BounceState.Pressed
+
+                        // Ожидает отжатия кнопки, чтобы изменить сотояние на Отжатое
+                        tryAwaitRelease()
+
+                        currentState = BounceState.Released
+                    })
                 })
             Text(monster.value.name, textAlign = TextAlign.Center)
+            Text(monster.value.hp.toString(), textAlign = TextAlign.Center)
         }
     }
 }
