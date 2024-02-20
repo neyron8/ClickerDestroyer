@@ -2,19 +2,18 @@ package com.example.clickerdestroyer
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.clickerdestroyer.data.Creature
 import com.example.clickerdestroyer.data.Player
+import com.example.clickerdestroyer.db.MainDb
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
-    private var creature = mutableStateOf(Creature())
-    private var player = mutableStateOf(Player("Jacko"))
-
-    fun getMonster() = creature
-
-    fun getPlayer() = player
+class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel() {
+    var creature = mutableStateOf(Creature())
+    var player = mutableStateOf(Player("Jacko"))
 
     private fun changeMonster() {
         creature.value.apply {
@@ -24,12 +23,21 @@ class MainViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun insertData(player: Player) = viewModelScope.launch {
+        mainDb.dao.insertData(player)
+    }
+
+    fun getData(name: String) = viewModelScope.launch {
+        player.value = mainDb.dao.getData(name)
+    }
+
     private fun killMonster() {
         player.value.money += creature.value.reward
+        insertData(player.value)
         changeMonster()
     }
 
-    fun attack(){
+    suspend fun attack(){
         if ((creature.value.hp <= 0) || ((creature.value.hp - player.value.damage) <= 0)) {
             killMonster()
         } else {
