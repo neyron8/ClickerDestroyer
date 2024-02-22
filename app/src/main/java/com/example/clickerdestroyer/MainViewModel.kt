@@ -7,14 +7,13 @@ import com.example.clickerdestroyer.data.Creature
 import com.example.clickerdestroyer.data.Player
 import com.example.clickerdestroyer.db.MainDb
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel() {
 
-    var creature = MutableStateFlow(Creature())
+    var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
 
     private fun changeMonster() {
@@ -30,7 +29,15 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     }
 
     fun getData(name: String) = viewModelScope.launch {
-        player.value = mainDb.dao.getData(name)
+        //player.value = mainDb.dao.getData(name)
+        if (mainDb.dao.getData(name) == null){
+            insertData(
+                player.value
+            )
+        } else {
+            player.value = mainDb.dao.getData(name)
+        }
+
     }
 
     private fun killMonster() {

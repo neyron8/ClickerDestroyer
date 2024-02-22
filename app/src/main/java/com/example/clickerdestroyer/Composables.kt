@@ -9,13 +9,15 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +29,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,15 +46,16 @@ import com.example.clickerdestroyer.data.Player
 
 
 enum class BounceState { Pressed, Released }
+
 @SuppressLint("FlowOperatorInvokedInComposition")
 @Composable
 fun MainContent(
-    viewModel: MainViewModel = hiltViewModel())
-{
+    viewModel: MainViewModel = hiltViewModel()
+) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
     viewModel.getData("Jacko")
-    
-    val monster = viewModel.creature.collectAsState()
+
+    val monster = viewModel.creature.value
     val player = viewModel.player.value
 
     var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
@@ -68,12 +72,24 @@ fun MainContent(
         }
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        PlayerInfo(player = player)
-        Box(modifier = Modifier.height(400.dp).graphicsLayer {
-            scaleX = scale
-            scaleY = scale
-        }.pointerInput(Unit) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    20.dp
+                )
+        ) {
+            PlayerInfo(player = player)
+        }
+        Box(modifier = Modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .pointerInput(Unit) {
                 detectTapGestures(onPress = {
                     viewModel.attack()
                     // Устанавливает текущее состояние на Нажатое,
@@ -85,14 +101,16 @@ fun MainContent(
 
                     currentState = BounceState.Released
                 })
-            },contentAlignment = Alignment.BottomCenter){
+            }
+            .fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     painter = painterResource(id = R.drawable.monster),
-                    contentDescription = "gfg")
+                    contentDescription = "gfg"
+                )
+                MobInfo(monster = monster)
             }
         }
-        MobInfo(monster.value)
     }
 }
 
@@ -104,12 +122,8 @@ private fun MobInfo(monster: Creature) {
 
 @Composable
 private fun PlayerInfo(player: Player) {
-    Box(contentAlignment = Alignment.TopCenter){
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = player.name)
-            Text(text = player.money.toString())
-        }
-    }
+    Text(text = player.name)
+    Text(text = player.money.toString())
 }
 
 @Composable
@@ -151,5 +165,65 @@ fun VideoPlayer(uri: Uri) {
         })
     ) {
         onDispose { exoPlayer.release() }
+    }
+}
+
+@Preview
+@Composable
+fun TestFor() {
+    var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
+    val transition = updateTransition(targetState = currentState, label = "animation")
+    val scale: Float by transition.animateFloat(
+        transitionSpec = { spring(stiffness = 900f) }, label = ""
+    ) { state ->
+        // 0.75f размер картинки во время нажатия
+        if (state == BounceState.Pressed) {
+            0.75f
+        } else {
+            //когда отпускаешь нажатие, картинка возвращает свой размер
+            1f
+        }
+    }
+    VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    20.dp
+                )
+        ) {
+            Text(text = "moneyd")
+            Text(text = "money2d")
+        }
+        Box(modifier = Modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .pointerInput(Unit) {
+                detectTapGestures(onPress = {
+                    // Устанавливает текущее состояние на Нажатое,
+                    // чтобы затриггерить анимацию нажатия
+                    currentState = BounceState.Pressed
+
+                    // Ожидает отжатия кнопки, чтобы изменить сотояние на Отжатое
+                    tryAwaitRelease()
+
+                    currentState = BounceState.Released
+                })
+            }
+            .fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.monster),
+                    contentDescription = "gfg"
+                )
+                Text("sdasd")
+                Text("dssd")
+            }
+        }
     }
 }
