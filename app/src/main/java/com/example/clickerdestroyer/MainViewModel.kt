@@ -24,13 +24,12 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
         }
     }
 
-    fun insertData(player: Player) = viewModelScope.launch {
+    private fun insertData(player: Player) = viewModelScope.launch {
         mainDb.dao.insertData(player)
     }
 
     fun getData(name: String) = viewModelScope.launch {
-        //player.value = mainDb.dao.getData(name)
-        if (mainDb.dao.getData(name) == null){
+        if (mainDb.dao.getData(name) == null) {
             insertData(
                 player.value
             )
@@ -46,7 +45,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
         changeMonster()
     }
 
-    suspend fun attack(){
+    fun attack() {
         if ((creature.value.hp <= 0) || ((creature.value.hp - player.value.damage) <= 0)) {
             killMonster()
         } else {
