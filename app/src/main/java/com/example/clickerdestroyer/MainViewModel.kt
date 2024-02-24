@@ -24,7 +24,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
         }
     }
 
-    private fun insertData(player: Player) = viewModelScope.launch {
+    fun insertData(player: Player) = viewModelScope.launch {
         mainDb.dao.insertData(player)
     }
 

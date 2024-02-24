@@ -81,14 +81,16 @@ dependencies {
     implementation ("androidx.room:room-ktx:2.5.2")
     kapt ("androidx.room:room-compiler:2.5.2")
 
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
 
     // Coroutine Lifecycle Scopes
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
 
-    implementation ("androidx.media3:media3-exoplayer:1.0.0-alpha03")
-    implementation ("androidx.media3:media3-ui:1.0.0-alpha03")
+    implementation("androidx.media3:media3-exoplayer:1.0.0-alpha03")
+    implementation("androidx.media3:media3-ui:1.0.0-alpha03")
+
+    implementation("androidx.navigation:navigation-compose:2.5.3")
 
 }
