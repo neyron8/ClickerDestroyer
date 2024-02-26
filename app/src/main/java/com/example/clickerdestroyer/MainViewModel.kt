@@ -51,4 +51,9 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
             creature.value.hp -= player.value.damage
         }
     }
+
+    fun upgradeDamage(k: Int) {
+        player.value.money -= k * player.value.damage
+        player.value.damage += k
+    }
 }

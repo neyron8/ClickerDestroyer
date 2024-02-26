@@ -209,8 +209,6 @@ fun TestFor() {
 @Composable
 fun Shop(navController: NavController, mainViewModel: MainViewModel) {
     val player = mainViewModel.player.value
-    //navController.previousBackStackEntry?.savedStateHandle?.get<Player>("Player")
-    //var stats = Pair(player?.money.toString(), player?.damage.toString())
     var money by remember {
         mutableStateOf(player.money)
     }
@@ -227,8 +225,7 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
         Text(text = "Damage: $damage")
         Button(onClick = {
             if (player.money > (player.damage * 5)) {
-                //stats = playerStatsChange(player, 5)
-                playerStatsChange(player, 5)
+                mainViewModel.upgradeDamage(5)
                 damage = player.damage
                 money = player.money
             }
@@ -237,7 +234,7 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
         }
         Button(onClick = {
             if (player.money > (player.damage * 15)) {
-                playerStatsChange(player, 15)
+                mainViewModel.upgradeDamage(15)
                 damage = player.damage
                 money = player.money
             }
@@ -254,10 +251,4 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
         }
     }
 
-}
-
-private fun playerStatsChange(player: Player, k: Int): Pair<String, String> {
-    player.damage = player.damage + k
-    player.money -= player.damage * k
-    return Pair(player.damage.toString(), player.money.toString())
 }
