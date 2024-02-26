@@ -10,9 +10,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.clickerdestroyer.MainViewModel
 import com.example.clickerdestroyer.R
@@ -140,8 +143,14 @@ private fun MobInfo(monster: Creature) {
 
 @Composable
 private fun PlayerInfo(player: Player) {
-    Text(text = player.damage.toString())
-    Text(text = "Money: ${player.money}", color = Color.White)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = R.drawable.money),
+            contentDescription = "moneyIcon"
+        )
+        Text(fontSize = 20.sp, text = "${player.money}", color = Color.White)
+    }
 }
 
 @Preview
@@ -215,7 +224,7 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
     var damage by remember {
         mutableStateOf(player.damage)
     }
-    Column {
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             modifier = Modifier.fillMaxSize(0.5f),
             painter = painterResource(id = R.drawable.raccoon_keeper),
@@ -250,5 +259,4 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
             Text(text = "Back")
         }
     }
-
 }
