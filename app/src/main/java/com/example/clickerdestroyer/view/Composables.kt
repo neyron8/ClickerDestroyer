@@ -2,7 +2,6 @@ package com.example.clickerdestroyer.view
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
@@ -30,7 +29,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.clickerdestroyer.MainViewModel
 import com.example.clickerdestroyer.R
@@ -43,7 +41,7 @@ enum class BounceState { Pressed, Released }
 @SuppressLint("FlowOperatorInvokedInComposition")
 @Composable
 fun MainContent(
-    viewModel: MainViewModel = hiltViewModel(), navController: NavController,
+    viewModel: MainViewModel, navController: NavController,
 ) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
     viewModel.getData("Jacko")
@@ -51,11 +49,11 @@ fun MainContent(
     val monster = viewModel.creature.value
     var player = viewModel.player.value
 
-    val player_mod =
+    val playerMod =
         navController.currentBackStackEntry?.savedStateHandle?.get<Player>("Player_mod")
 
-    if (player_mod != null) {
-        player = player_mod
+    if (playerMod != null) {
+        player = playerMod
         viewModel.insertData(player)
     }
 
@@ -209,18 +207,42 @@ fun TestFor() {
 }
 
 @Composable
-fun Shop(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
-    val player =
-        navController.previousBackStackEntry?.savedStateHandle?.get<Player>("Player")
+fun Shop(navController: NavController, mainViewModel: MainViewModel) {
+    val player = mainViewModel.player.value
+    //navController.previousBackStackEntry?.savedStateHandle?.get<Player>("Player")
+    //var stats = Pair(player?.money.toString(), player?.damage.toString())
+    var money by remember {
+        mutableStateOf(player.money)
+    }
+    var damage by remember {
+        mutableStateOf(player.damage)
+    }
     Column {
-        if (player != null) {
-            Button(onClick = {
-                player.damage = player.damage + 15
-                Log.d("damage", viewModel.player.value.money.toString())
-            }) {
-                Text("+15")
+        Image(
+            modifier = Modifier.fillMaxSize(0.5f),
+            painter = painterResource(id = R.drawable.raccoon_keeper),
+            contentDescription = "Shop Keeper"
+        )
+        Text(text = "Money: $money")
+        Text(text = "Damage: $damage")
+        Button(onClick = {
+            if (player.money > (player.damage * 5)) {
+                //stats = playerStatsChange(player, 5)
+                playerStatsChange(player, 5)
+                damage = player.damage
+                money = player.money
             }
-            Text("Player damage and money is ${player.damage} ${player.money}")
+        }) {
+            Text("+5 cost: ${(player.damage * 5)}")
+        }
+        Button(onClick = {
+            if (player.money > (player.damage * 15)) {
+                playerStatsChange(player, 15)
+                damage = player.damage
+                money = player.money
+            }
+        }) {
+            Text("+15 cost: ${(player.damage * 15)}")
         }
         Button(onClick = {
             navController.previousBackStackEntry
@@ -232,4 +254,10 @@ fun Shop(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         }
     }
 
+}
+
+private fun playerStatsChange(player: Player, k: Int): Pair<String, String> {
+    player.damage = player.damage + k
+    player.money -= player.damage * k
+    return Pair(player.damage.toString(), player.money.toString())
 }

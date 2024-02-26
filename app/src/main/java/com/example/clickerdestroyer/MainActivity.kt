@@ -3,6 +3,7 @@ package com.example.clickerdestroyer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel: MainViewModel by viewModels()
         setContent {
             ClickerDestroyerTheme {
                 val navController = rememberNavController()
@@ -32,10 +34,10 @@ class MainActivity : ComponentActivity() {
                         startDestination = "MainContent"
                     ) {
                         composable("MainContent") {
-                            MainContent(navController = navController)
+                            MainContent(navController = navController, viewModel = viewModel)
                         }
                         composable("Shop") {
-                            Shop(navController)
+                            Shop(navController, viewModel)
                         }
                     }
                 }

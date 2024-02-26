@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel() {
-
     var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
 
