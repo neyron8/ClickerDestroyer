@@ -91,7 +91,7 @@ fun MainContent(
             , contentAlignment = Alignment.Center,) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
-                    painter = painterResource(id = R.drawable.monster),
+                    painter = painterResource(id = monster.imageOfMonster),
                     contentDescription = "gfg",
                     modifier = Modifier
                         .graphicsLayer {
@@ -203,7 +203,7 @@ fun TestFor() {
             .fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
-                    painter = painterResource(id = R.drawable.monster),
+                    painter = painterResource(id = R.drawable.monster5),
                     contentDescription = "gfg"
                 )
                 Text("sdasd")

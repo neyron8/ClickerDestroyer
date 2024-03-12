@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.clickerdestroyer.data.Creature
+import com.example.clickerdestroyer.data.ImagesOfMonsters
 import com.example.clickerdestroyer.data.Player
 import com.example.clickerdestroyer.db.MainDb
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +16,13 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
 
+
     private fun changeMonster() {
         creature.value.apply {
             name = "Jerry"
             reward = 300
             hp = 31
+            imageOfMonster = ImagesOfMonsters().Images.random()
         }
     }
 
