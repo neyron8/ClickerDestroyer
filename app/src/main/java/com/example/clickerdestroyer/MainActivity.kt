@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel: MainViewModel by viewModels()
+        viewModel.getData("Jacko")
         setContent {
             ClickerDestroyerTheme {
                 val navController = rememberNavController()

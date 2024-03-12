@@ -47,7 +47,6 @@ fun MainContent(
     viewModel: MainViewModel, navController: NavController,
 ) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
-    viewModel.getData("Jacko")
 
     val monster = viewModel.creature.value
     var player = viewModel.player.value
@@ -55,10 +54,15 @@ fun MainContent(
     val playerMod =
         navController.currentBackStackEntry?.savedStateHandle?.get<Player>("Player_mod")
 
-    if (playerMod != null) {
+    //let
+    playerMod?.let {
         player = playerMod
-        viewModel.insertData(player)
+        viewModel.insertDataPlayer(player)
     }
+    /*if (playerMod != null) {
+        player = playerMod
+        viewModel.insertDataPlayer(player)
+    }*/
 
     var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
     val transition = updateTransition(targetState = currentState, label = "animation")

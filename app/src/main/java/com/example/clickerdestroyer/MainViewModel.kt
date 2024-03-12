@@ -20,31 +20,36 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     private fun changeMonster() {
         creature.value.apply {
             name = "Jerry"
-            reward = 300
-            hp = 31
+            level++
+            hp = level * 100
+            reward = hp
             imageOfMonster = ImagesOfMonsters().Images.random()
         }
     }
 
-    fun insertData(player: Player) = viewModelScope.launch {
-        mainDb.dao.insertData(player)
+    fun insertDataPlayer(player: Player) = viewModelScope.launch {
+        mainDb.dao.insertDataPlayer(player)
+    }
+
+    private fun insertDataCreature(creature: Creature) = viewModelScope.launch {
+        mainDb.dao.insertDataCreature(creature)
     }
 
     fun getData(name: String) = viewModelScope.launch {
-        if (mainDb.dao.getData(name) == null) {
-            insertData(
-                player.value
-            )
+        if (mainDb.dao.getDataPlayer(name) == null) {
+            insertDataPlayer(player.value)
+            insertDataCreature(creature.value)
         } else {
-            player.value = mainDb.dao.getData(name)
+            player.value = mainDb.dao.getDataPlayer(name)
+            creature.value = mainDb.dao.getDataCreature()
         }
-
     }
 
     private fun killMonster() {
         player.value.money += creature.value.reward
-        insertData(player.value)
+        insertDataPlayer(player.value)
         changeMonster()
+        insertDataCreature(creature.value)
     }
 
     fun attack() {

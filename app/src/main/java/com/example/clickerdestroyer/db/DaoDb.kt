@@ -5,16 +5,26 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.clickerdestroyer.data.Creature
 import com.example.clickerdestroyer.data.Player
 
 @Dao
 interface DaoDb {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertData(film: Player)
+    suspend fun insertDataPlayer(player: Player)
 
     @Delete
-    suspend fun deleteData(film: Player)
+    suspend fun deleteDataPlayer(player: Player)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDataCreature(creature: Creature)
+
+    @Delete
+    suspend fun deleteDataCreature(creature: Creature)
 
     @Query("SELECT * FROM player WHERE name = :name")
-    suspend fun getData (name : String) : Player
+    suspend fun getDataPlayer(name: String): Player
+
+    @Query("SELECT * FROM creature")
+    suspend fun getDataCreature(): Creature
 }
