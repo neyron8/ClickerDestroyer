@@ -16,6 +16,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
 
+    var openDialog = mutableStateOf(false)
 
     private fun changeMonster() {
         creature.value.apply {
@@ -50,6 +51,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
         insertDataPlayer(player.value)
         changeMonster()
         insertDataCreature(creature.value)
+        openDialog.value = true
     }
 
     fun attack() {

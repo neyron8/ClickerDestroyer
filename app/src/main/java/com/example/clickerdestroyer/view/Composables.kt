@@ -51,18 +51,15 @@ fun MainContent(
     val monster = viewModel.creature.value
     var player = viewModel.player.value
 
+    val openDialogCustom = viewModel.openDialog
+
     val playerMod =
         navController.currentBackStackEntry?.savedStateHandle?.get<Player>("Player_mod")
 
-    //let
     playerMod?.let {
         player = playerMod
         viewModel.insertDataPlayer(player)
     }
-    /*if (playerMod != null) {
-        player = playerMod
-        viewModel.insertDataPlayer(player)
-    }*/
 
     var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
     val transition = updateTransition(targetState = currentState, label = "animation")
@@ -76,6 +73,10 @@ fun MainContent(
             //когда отпускаешь нажатие, картинка возвращает свой размер
             1f
         }
+    }
+
+    if (openDialogCustom.value) {
+        DialogReward(openDialogCustom = openDialogCustom, mainViewModel = viewModel)
     }
 
     Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
@@ -129,6 +130,7 @@ fun MainContent(
                     navController.navigate("Shop")
                 },
             ) {
+                Text("Shop")
             }
         }
     }
@@ -221,6 +223,7 @@ fun TestFor() {
 
 @Composable
 fun Shop(navController: NavController, mainViewModel: MainViewModel) {
+    VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
     val player = mainViewModel.player.value
     var money by remember {
         mutableStateOf(player.money)
