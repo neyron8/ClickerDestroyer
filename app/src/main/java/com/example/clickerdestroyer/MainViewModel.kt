@@ -8,6 +8,7 @@ import com.example.clickerdestroyer.data.ImagesOfMonsters
 import com.example.clickerdestroyer.data.Player
 import com.example.clickerdestroyer.db.MainDb
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,8 +16,18 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel() {
     var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
+    var loading = mutableStateOf(false)
 
     var openDialog = mutableStateOf(false)
+
+    suspend fun changeLoadingState() {
+        delay(1500)
+        loading.value = false
+    }
+
+    fun getRandomReward() {
+        player.value.money += (2000..5000).random()
+    }
 
     private fun changeMonster() {
         creature.value.apply {
@@ -52,6 +63,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
         changeMonster()
         insertDataCreature(creature.value)
         openDialog.value = true
+        //Log.d("KILL", "Killed")
     }
 
     fun attack() {

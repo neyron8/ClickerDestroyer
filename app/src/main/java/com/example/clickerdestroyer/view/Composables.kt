@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -91,9 +92,11 @@ fun MainContent(
         ) {
             PlayerInfo(player = player)
         }
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            , contentAlignment = Alignment.Center,) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     painter = painterResource(id = monster.imageOfMonster),
@@ -206,7 +209,9 @@ fun TestFor() {
                     currentState = BounceState.Released
                 })
             }
-            .fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     painter = painterResource(id = R.drawable.monster5),
@@ -226,10 +231,10 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
     val player = mainViewModel.player.value
     var money by remember {
-        mutableStateOf(player.money)
+        mutableIntStateOf(player.money)
     }
     var damage by remember {
-        mutableStateOf(player.damage)
+        mutableIntStateOf(player.damage)
     }
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
