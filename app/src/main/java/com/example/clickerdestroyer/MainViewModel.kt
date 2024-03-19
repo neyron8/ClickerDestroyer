@@ -17,6 +17,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
     var loading = mutableStateOf(false)
+    var randomChance = 0
 
     var openDialog = mutableStateOf(false)
 
@@ -62,7 +63,9 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
         insertDataPlayer(player.value)
         changeMonster()
         insertDataCreature(creature.value)
-        openDialog.value = true
+        randomChance = (0..100).random()
+        if (randomChance in 80..100)
+            openDialog.value = true
         //Log.d("KILL", "Killed")
     }
 
