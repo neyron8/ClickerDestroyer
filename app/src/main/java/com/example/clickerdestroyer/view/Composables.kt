@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,8 +50,8 @@ fun MainContent(
 ) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
 
-    val monster = viewModel.creature.value
-    var player = viewModel.player.value
+    val monster = viewModel.creature.collectAsState()
+    val player = viewModel.player.collectAsState()
 
     val openDialogCustom = viewModel.openDialog
 
@@ -58,8 +59,8 @@ fun MainContent(
         navController.currentBackStackEntry?.savedStateHandle?.get<Player>("Player_mod")
 
     playerMod?.let {
-        player = playerMod
-        viewModel.insertDataPlayer(player)
+        viewModel.updatePlayer(playerMod)
+        viewModel.insertDataPlayer(playerMod)
     }
 
     var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
@@ -90,8 +91,8 @@ fun MainContent(
                     20.dp
                 )
         ) {
-            PlayerInfo(player = player)
-            Text(viewModel.player.value.money.toString())
+            PlayerInfo(player = player.value)
+            //Text(viewModel.player.value.money.toString())
         }
         Box(
             modifier = Modifier
@@ -100,7 +101,7 @@ fun MainContent(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
-                    painter = painterResource(id = monster.imageOfMonster),
+                    painter = painterResource(id = monster.value.imageOfMonster),
                     contentDescription = "gfg",
                     modifier = Modifier
                         .graphicsLayer {
@@ -121,7 +122,7 @@ fun MainContent(
                             })
                         }
                 )
-                MobInfo(monster = monster)
+                MobInfo(monster = monster.value)
             }
         }
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -230,10 +231,10 @@ fun TestFor() {
 @Composable
 fun Shop(navController: NavController, mainViewModel: MainViewModel) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
-    val player = mainViewModel.player.value
+    val player = mainViewModel.player.collectAsState()
 
     var damage by remember {
-        mutableIntStateOf(player.damage)
+        mutableIntStateOf(player.value.damage)
     }
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
@@ -241,28 +242,28 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
             painter = painterResource(id = R.drawable.raccoon_keeper),
             contentDescription = "Shop Keeper"
         )
-        Text(text = "Money: ${player.money}")
-        Text(text = "Damage: $damage")
+        Text(text = "Money: ${player.value.money}")
+        Text(text = "Damage: ${damage}")
         Button(onClick = {
-            if (player.money > (player.damage * 5)) {
+            if (player.value.money > (player.value.damage * 5)) {
                 mainViewModel.upgradeDamage(5)
-                damage = player.damage
+                damage = player.value.damage
             }
         }) {
-            Text("+5 cost: ${(player.damage * 5)}")
+            Text("+5 cost: ${(player.value.damage * 5)}")
         }
         Button(onClick = {
-            if (player.money > (player.damage * 15)) {
+            if (player.value.money > (player.value.damage * 15)) {
                 mainViewModel.upgradeDamage(15)
-                damage = player.damage
+                damage = player.value.damage
             }
         }) {
-            Text("+15 cost: ${(player.damage * 15)}")
+            Text("+15 cost: ${(player.value.damage * 15)}")
         }
         Button(onClick = {
             navController.previousBackStackEntry
                 ?.savedStateHandle
-                ?.set("Player_mod", player)
+                ?.set("Player_mod", player.value)
             navController.popBackStack()
         }) {
             Text(text = "Back")

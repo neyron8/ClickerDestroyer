@@ -10,17 +10,28 @@ import com.example.clickerdestroyer.data.Player
 import com.example.clickerdestroyer.db.MainDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel() {
-    var creature = mutableStateOf(Creature())
-    var player = mutableStateOf(Player("Jacko"))
+    private val _creature = MutableStateFlow(Creature())
+    val creature = _creature.asStateFlow()
+    //var creature = mutableStateOf(Creature())
+
+    private val _player = MutableStateFlow(Player("Jacko"))
+    val player = _player.asStateFlow()
+
     var loading = mutableStateOf(false)
     private var randomChance = 0
 
     var openDialog = mutableStateOf(false)
+
+    fun updatePlayer(player: Player) {
+        _player.value = player
+    }
 
     suspend fun changeLoadingState() {
         delay(1500)
@@ -28,11 +39,11 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     }
 
     fun getRandomReward() {
-        player.value.money += (2000..5000).random()
+        _player.value.money += (2000..5000).random()
     }
 
     private fun changeMonster() {
-        creature.value.apply {
+        _creature.value.apply {
             name = "Jerry"
             level++
             hp = level * 100
@@ -54,16 +65,16 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
             insertDataPlayer(player.value)
             insertDataCreature(creature.value)
         } else {
-            player.value = mainDb.dao.getDataPlayer(name)
-            creature.value = mainDb.dao.getDataCreature()
+            _player.value = mainDb.dao.getDataPlayer(name)
+            _creature.value = mainDb.dao.getDataCreature()
         }
     }
 
     private fun killMonster() {
-        player.value.money += creature.value.reward
-        insertDataPlayer(player.value)
+        _player.value.money += creature.value.reward
+        insertDataPlayer(_player.value)
         changeMonster()
-        insertDataCreature(creature.value)
+        insertDataCreature(_creature.value)
         randomChance = (0..100).random()
         if (randomChance in 80..100)
             openDialog.value = true
@@ -71,17 +82,17 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     }
 
     fun attack() {
-        if ((creature.value.hp <= 0) || ((creature.value.hp - player.value.damage) <= 0)) {
+        if ((_creature.value.hp <= 0) || ((_creature.value.hp - player.value.damage) <= 0)) {
             killMonster()
         } else {
-            creature.value.hp -= player.value.damage
+            _creature.value.hp -= _player.value.damage
         }
     }
 
     fun upgradeDamage(k: Int) {
-        player.value.money -= k * player.value.damage
-        player.value.damage += k
-        Log.d("Money", player.value.money.toString())
-        Log.d("Damage", player.value.damage.toString())
+        _player.value.money -= k * _player.value.damage
+        _player.value.damage += k
+        Log.d("Money", _player.value.money.toString())
+        Log.d("Damage", _player.value.damage.toString())
     }
 }
