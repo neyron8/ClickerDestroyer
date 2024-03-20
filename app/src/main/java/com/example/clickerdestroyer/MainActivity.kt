@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                             MainContent(navController = navController, viewModel = viewModel)
                         }
                         composable("Shop") {
-                            Shop(navController, viewModel)
+                            Shop(navController, mainViewModel = viewModel)
                         }
                     }
                 }

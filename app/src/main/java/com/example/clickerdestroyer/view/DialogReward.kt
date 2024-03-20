@@ -108,7 +108,7 @@ fun IndeterminateCircularIndicator(mvm: MainViewModel) {
             },
             enabled = !mvm.loading.value,
         ) {
-            Text("Start loading")
+            Text("Roll")
         }
 
         if (!mvm.loading.value) return

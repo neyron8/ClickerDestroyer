@@ -91,6 +91,7 @@ fun MainContent(
                 )
         ) {
             PlayerInfo(player = player)
+            Text(viewModel.player.value.money.toString())
         }
         Box(
             modifier = Modifier
@@ -230,9 +231,7 @@ fun TestFor() {
 fun Shop(navController: NavController, mainViewModel: MainViewModel) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
     val player = mainViewModel.player.value
-    var money by remember {
-        mutableIntStateOf(player.money)
-    }
+
     var damage by remember {
         mutableIntStateOf(player.damage)
     }
@@ -242,13 +241,12 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
             painter = painterResource(id = R.drawable.raccoon_keeper),
             contentDescription = "Shop Keeper"
         )
-        Text(text = "Money: $money")
+        Text(text = "Money: ${player.money}")
         Text(text = "Damage: $damage")
         Button(onClick = {
             if (player.money > (player.damage * 5)) {
                 mainViewModel.upgradeDamage(5)
                 damage = player.damage
-                money = player.money
             }
         }) {
             Text("+5 cost: ${(player.damage * 5)}")
@@ -257,7 +255,6 @@ fun Shop(navController: NavController, mainViewModel: MainViewModel) {
             if (player.money > (player.damage * 15)) {
                 mainViewModel.upgradeDamage(15)
                 damage = player.damage
-                money = player.money
             }
         }) {
             Text("+15 cost: ${(player.damage * 15)}")

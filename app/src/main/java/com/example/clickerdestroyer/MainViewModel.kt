@@ -1,5 +1,6 @@
 package com.example.clickerdestroyer
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +18,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     var creature = mutableStateOf(Creature())
     var player = mutableStateOf(Player("Jacko"))
     var loading = mutableStateOf(false)
-    var randomChance = 0
+    private var randomChance = 0
 
     var openDialog = mutableStateOf(false)
 
@@ -80,5 +81,7 @@ class MainViewModel @Inject constructor(private val mainDb: MainDb) : ViewModel(
     fun upgradeDamage(k: Int) {
         player.value.money -= k * player.value.damage
         player.value.damage += k
+        Log.d("Money", player.value.money.toString())
+        Log.d("Damage", player.value.damage.toString())
     }
 }
