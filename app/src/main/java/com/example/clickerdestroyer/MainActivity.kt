@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.clickerdestroyer.ui.theme.ClickerDestroyerTheme
+import com.example.clickerdestroyer.view.BossScreen
 import com.example.clickerdestroyer.view.MainContent
 import com.example.clickerdestroyer.view.Shop
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +40,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("Shop") {
                             Shop(navController, mainViewModel = viewModel)
+                        }
+                        composable("BossScreen") {
+                            BossScreen()
                         }
                     }
                 }

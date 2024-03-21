@@ -46,7 +46,8 @@ enum class BounceState { Pressed, Released }
 @SuppressLint("FlowOperatorInvokedInComposition")
 @Composable
 fun MainContent(
-    viewModel: MainViewModel, navController: NavController,
+    viewModel: MainViewModel,
+    navController: NavController,
 ) {
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
 
@@ -181,7 +182,7 @@ fun TestFor() {
         }
     }
     VideoPlayer(uri = Uri.parse("android.resource://ClickerDestroyer/" + R.raw.moon))
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.End,
@@ -190,41 +191,38 @@ fun TestFor() {
                 .padding(
                     20.dp
                 )
+        ) {}
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(text = "moneyd")
-            Text(text = "money2d")
-        }
-        Column(modifier = Modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .pointerInput(Unit) {
-                detectTapGestures(onPress = {
-                    // Устанавливает текущее состояние на Нажатое,
-                    // чтобы затриггерить анимацию нажатия
-                    currentState = BounceState.Pressed
-
-                    // Ожидает отжатия кнопки, чтобы изменить сотояние на Отжатое
-                    tryAwaitRelease()
-
-                    currentState = BounceState.Released
-                })
-            }
-            .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
-                    painter = painterResource(id = R.drawable.monster5),
-                    contentDescription = "gfg"
-                )
-                Text("sdasd")
-                Text("dssd")
-            }
+                    painter = painterResource(id = R.drawable.monster3),
+                    contentDescription = "gfg",
+                    modifier = Modifier
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures(onPress = {
+                                //viewModel.attack()
+                                // Устанавливает текущее состояние на Нажатое,
+                                // чтобы затриггерить анимацию нажатия
+                                currentState = BounceState.Pressed
 
+                                // Ожидает отжатия кнопки, чтобы изменить сотояние на Отжатое
+                                tryAwaitRelease()
+
+                                currentState = BounceState.Released
+                            })
+                        }
+                )
+                //MobInfo(monster = monster.value)
+            }
         }
-        Text("233123")
     }
 }
 
